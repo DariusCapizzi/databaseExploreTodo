@@ -5,27 +5,39 @@ import org.sql2o.*;
 
 public class Task {
   // private String mDescription;
-  // private boolean mCompleted;
+  //
   // private LocalDateTime mCreatedAt;
   // private static ArrayList<Task> instantFood = new ArrayList<Task>();
   // private int mId;
 
 
 //server-database
+  private boolean completed;
   private int id;
   private String description;
+  private String createdAt;
 
 
   public Task(String description) {
     this.description = description;
+    createdAt = LocalDateTime.now().toString();
+    completed = false;
   }
 
   public String getDescription() {
     return description;
   }
 
+  public String getCreatedAt() {
+    return createdAt;
+  }
+
   public int getId() {
     return id;
+  }
+
+  public boolean isCompleted() {
+    return completed;
   }
 
   public static List<Task> all(){
@@ -55,8 +67,12 @@ public class Task {
 
   public void save() {
     try(Connection con = DB.sql2o.open()){
-      String sql = "INSERT INTO tasks (description) VALUES (:description)";
-      this.id = (int) con.createQuery(sql, true).addParameter("description", description).executeUpdate().getKey();
+      String sql = "INSERT INTO tasks (description, createdAt, completed) VALUES (:description, :createdAt, :completed)";
+      this.id = (int) con.createQuery(sql, true)
+      .addParameter("description", description)
+      .addParameter("createdAt", createdAt)
+      .addParameter("completed", completed)
+      .executeUpdate().getKey();
     }
   }
 
@@ -71,23 +87,21 @@ public class Task {
 //   }
 //
 //   public static Task find(int id) {
-//     try {
-//       return instantFood.get(id);
-//     } catch (IndexOutOfBoundsException e) {
-//       System.out.println(e);
-//       return null;
-//     }
-//   }
-//
+// //     try {
+// //       return instantFood.get(id);
+// //     } catch (IndexOutOfBoundsException e) {
+// //       System.out.println(e);
+// //       return null;
+// //     }
+// //   }
+
 //   public String getDescription() {
 //     return mDescription;
 //   }
 //
-//   public boolean isCompleted() {
-//     return mCompleted;
-//   }
+
 //
-//   public void completedTask(){
+  // public void completedTask(){
 //     if(mCompleted){
 //       mCompleted = false;
 //     } else {
@@ -95,9 +109,7 @@ public class Task {
 //     }
 //   }
 //
-//   public LocalDateTime getCreatedAt() {
-//     return mCreatedAt;
-//   }
+
 //
 //   public static ArrayList<Task> all() {
 //     return instantFood;
